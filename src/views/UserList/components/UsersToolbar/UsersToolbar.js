@@ -2,9 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
-import { Button } from '@material-ui/core';
+import { Button, TextField, Grid } from '@material-ui/core';
 
-import { SearchInput } from 'components';
 
 const useStyles = makeStyles(theme => ({
   root: {},
@@ -40,20 +39,29 @@ const UsersToolbar = props => {
     >
       <div className={classes.row}>
         <span className={classes.spacer} />
-        <Button className={classes.importButton}>Import</Button>
-        <Button className={classes.exportButton}>Export</Button>
-        <Button
-          color="primary"
-          variant="contained"
-        >
-          Add user
-        </Button>
       </div>
       <div className={classes.row}>
-        <SearchInput
-          className={classes.searchInput}
-          placeholder="Search user"
-        />
+        <Grid container>
+          <Grid item md={4}>
+            <TextField
+              className={classes.searchInput}
+              placeholder="Descrição da tarefa"
+              label="Descrição:"
+              fullWidth
+            />
+          </Grid>
+          <Grid item md={4}>
+            <TextField
+              className={classes.searchInput}
+              placeholder=""
+              label="Categoria:"
+              fullWidth
+            />
+          </Grid>
+          <Grid item md={2}>
+            <Button variant="contained" color="secondary">Adicionar</Button>
+          </Grid>
+        </Grid>
       </div>
     </div>
   );
