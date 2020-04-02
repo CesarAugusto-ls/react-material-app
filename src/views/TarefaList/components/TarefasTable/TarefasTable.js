@@ -35,8 +35,8 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const UsersTable = props => {
-  const { className, users, ...rest } = props;
+const TarefasTable = props => {
+  const { className, tarefas, ...rest } = props;
 
   const classes = useStyles();
 
@@ -58,7 +58,7 @@ const UsersTable = props => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                
+
               </TableBody>
             </Table>
           </div>
@@ -68,9 +68,9 @@ const UsersTable = props => {
   );
 };
 
-UsersTable.propTypes = {
+TarefasTable.propTypes = {
   className: PropTypes.string,
-  users: PropTypes.array.isRequired
+  tarefas: PropTypes.array.isRequired
 };
 
-export default UsersTable;
+export default TarefasTable;
