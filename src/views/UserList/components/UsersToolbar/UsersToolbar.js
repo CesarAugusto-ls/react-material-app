@@ -1,8 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
-import { Button, TextField, Grid } from '@material-ui/core';
+import {
+  Button,
+  TextField,
+  Grid,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel
+} from '@material-ui/core';
 
 
 const useStyles = makeStyles(theme => ({
@@ -30,7 +38,15 @@ const useStyles = makeStyles(theme => ({
 const UsersToolbar = props => {
   const { className, ...rest } = props;
 
+  const [descricao, setDescricao] = useState('')
+  const [categoria, setCategoria] = useState('')
+
   const classes = useStyles();
+
+  const submit = (event) =>{
+    event.preventDefault();
+    console.log(`Valores: descricao - ${descricao}, categoria - ${categoria}`)
+  }
 
   return (
     <div
@@ -48,18 +64,23 @@ const UsersToolbar = props => {
               placeholder="Descrição da tarefa"
               label="Descrição:"
               fullWidth
+              value={descricao}
+              onChange={e => setDescricao(e.target.value)}
             />
           </Grid>
           <Grid item md={4}>
-            <TextField
-              className={classes.searchInput}
-              placeholder=""
-              label="Categoria:"
-              fullWidth
-            />
+            <FormControl fullWidth>
+              <InputLabel>Categoria: </InputLabel>
+              <Select value={categoria} onChange={e => setCategoria(e.target.value)}>
+                <MenuItem value="">Selecione...</MenuItem>
+                <MenuItem value={"TRABALHO"}>Trabalho</MenuItem>
+                <MenuItem value={"ESTUDOS"}>Estudos</MenuItem>
+                <MenuItem value={"OUTROS"}>Outros</MenuItem>
+              </Select>
+            </FormControl>
           </Grid>
           <Grid item md={2}>
-            <Button variant="contained" color="secondary">Adicionar</Button>
+            <Button onClick={submit} variant="contained" color="secondary">Adicionar</Button>
           </Grid>
         </Grid>
       </div>
