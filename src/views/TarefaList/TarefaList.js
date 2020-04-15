@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/styles';
 
 import { TarefasToolbar, TarefasTable } from './components';
@@ -14,27 +14,47 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+const URL = 'https://minhastarefas-api.herokuapp.com/tarefas'
+const HEADERS = { 'x-tenant-id': 'fulano@email.com' };
+
 const TarefasList = () => {
   const classes = useStyles();
 
-  const [tarefas] = useState([]);
+  const [tarefas, setTarefas] = useState([]);
 
   const salvar = (tarefa) => {
-    const URL = 'https://minhastarefas-api.herokuapp.com/tarefas'
     axios.post(
       URL,
       tarefa,
-      {headers : {'x-tenant-id' : 'fulano@email.com'}
+      {
+        headers: HEADERS
+      }).then(response => {
+        console.log(response.data)
+        listarTarefas()
+      }).catch(erro => {
+        console.log(erro)
+      })
+  }
+
+  const listarTarefas = () => {
+    axios.get(
+      URL, {
+      headers: HEADERS
     }).then(response => {
-      console.log(response.data)
+      const listTarefas = response.data
+      setTarefas(listTarefas)
     }).catch(erro => {
       console.log(erro)
     })
   }
 
+  useEffect(() => {
+    listarTarefas()
+  }, [])
+
   return (
     <div className={classes.root}>
-      <TarefasToolbar salvar={salvar}/>
+      <TarefasToolbar salvar={salvar} />
       <div className={classes.content}>
         <TarefasTable tarefas={tarefas} />
       </div>
