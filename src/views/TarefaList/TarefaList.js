@@ -30,7 +30,8 @@ const TarefasList = () => {
         headers: HEADERS
       }).then(response => {
         console.log(response.data)
-        listarTarefas()
+        const novaTarefa = response.data
+        setTarefas([...tarefas, novaTarefa])
       }).catch(erro => {
         console.log(erro)
       })
