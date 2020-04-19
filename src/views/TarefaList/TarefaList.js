@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/styles';
-
 import { TarefasToolbar, TarefasTable } from './components';
-
 import axios from 'axios'
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle
+} from '@material-ui/core'
+import { Button } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -21,6 +26,8 @@ const TarefasList = () => {
   const classes = useStyles();
 
   const [tarefas, setTarefas] = useState([]);
+  const [openDialog, setOpenDialog] = useState(false)
+  const [menssagem, setMensagem] = useState('')
 
   const salvar = (tarefa) => {
     axios.post(
@@ -29,11 +36,11 @@ const TarefasList = () => {
       {
         headers: HEADERS
       }).then(response => {
-        console.log(response.data)
         const novaTarefa = response.data
         setTarefas([...tarefas, novaTarefa])
+        abrirDialog('Item adicionado com sucesso')
       }).catch(erro => {
-        console.log(erro)
+        abrirDialog('Ocorreum um erro')
       })
   }
 
@@ -45,38 +52,45 @@ const TarefasList = () => {
       const listTarefas = response.data
       setTarefas(listTarefas)
     }).catch(erro => {
-      console.log(erro)
+      abrirDialog('Ocorreum um erro')
     })
   }
 
   const alterarStatus = (id) => {
     axios.patch(`${URL}/${id}`, null, {
-      headers : HEADERS
+      headers: HEADERS
     }).then(response => {
       const lista = [...tarefas]
       lista.forEach(tarefa => {
-        if(tarefa.id === id){
+        if (tarefa.id === id) {
           tarefa.done = true
         }
       })
       setTarefas(lista)
+      abrirDialog('Status atualizado com sucesso')
     }).catch(erro => {
-      console.log(erro)
+      abrirDialog('Ocorreum um erro')
     })
   }
 
-  const deletar = (id) =>{
+  const deletar = (id) => {
     axios.delete(`${URL}/${id}`, {
-      headers : HEADERS
+      headers: HEADERS
     })
-    .then(response => {
-      const lista = tarefas.filter(tarefa => tarefa.id !== id)
-      setTarefas(lista)
-    })
-    .catch(erro => {
-      console.log(erro)
-    })
+      .then(response => {
+        const lista = tarefas.filter(tarefa => tarefa.id !== id)
+        setTarefas(lista)
+        abrirDialog('Item deletado com sucesso')
+      })
+      .catch(erro => {
+        abrirDialog('Ocorreum um erro')
+      })
   }
+
+  const abrirDialog = (mensagem => {
+    setMensagem(mensagem)
+    setOpenDialog(true)
+  })
 
   useEffect(() => {
     listarTarefas()
@@ -86,10 +100,19 @@ const TarefasList = () => {
     <div className={classes.root}>
       <TarefasToolbar salvar={salvar} />
       <div className={classes.content}>
-        <TarefasTable alterarStatus={alterarStatus} 
-                      deleteAction={deletar}
-                      tarefas={tarefas} />
+        <TarefasTable alterarStatus={alterarStatus}
+          deleteAction={deletar}
+          tarefas={tarefas} />
       </div>
+      <Dialog open={openDialog} onClose={e => setOpenDialog(false)}>
+        <DialogTitle>Atenção</DialogTitle>
+        <DialogContent>
+          {menssagem}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={e => setOpenDialog(false)}>Fechar</Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
