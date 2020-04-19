@@ -20,14 +20,14 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const URL = 'https://minhastarefas-api.herokuapp.com/tarefas'
-const HEADERS = { 'x-tenant-id': 'fulano@email.com' };
-
 const TarefasList = () => {
   const classes = useStyles();
 
   const [tarefas, setTarefas] = useState([]);
   const [openDialog, setOpenDialog] = useState(false)
   const [menssagem, setMensagem] = useState('')
+
+  const HEADERS = { 'x-tenant-id': localStorage.getItem('email_usuario_logado')};
 
   const salvar = (tarefa) => {
     axios.post(
