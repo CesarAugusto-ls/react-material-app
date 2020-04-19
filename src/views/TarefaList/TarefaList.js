@@ -49,6 +49,22 @@ const TarefasList = () => {
     })
   }
 
+  const alterarStatus = (id) => {
+    axios.patch(`${URL}/${id}`, null, {
+      headers : HEADERS
+    }).then(response => {
+      const lista = [...tarefas]
+      lista.forEach(tarefa => {
+        if(tarefa.id === id){
+          tarefa.done = true
+        }
+      })
+      setTarefas(lista)
+    }).catch(erro => {
+      console.log(erro)
+    })
+  }
+
   useEffect(() => {
     listarTarefas()
   }, [])
@@ -57,7 +73,7 @@ const TarefasList = () => {
     <div className={classes.root}>
       <TarefasToolbar salvar={salvar} />
       <div className={classes.content}>
-        <TarefasTable tarefas={tarefas} />
+        <TarefasTable alterarStatus={alterarStatus} tarefas={tarefas} />
       </div>
     </div>
   );
