@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const http = axios.create({
-    baseURL: 'https://minhastarefas-api.herokuapp.com'
+    baseURL: process.env.REACT_APP_API_BASEURL
 })
 const HEADERS = { 'x-tenant-id': localStorage.getItem('email_usuario_logado') };
 
