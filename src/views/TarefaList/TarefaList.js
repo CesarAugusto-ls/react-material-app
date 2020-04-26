@@ -10,6 +10,15 @@ import {
 } from '@material-ui/core'
 import { Button } from '@material-ui/core';
 
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import { 
+  listar,
+  salvar,
+  deletar,
+  alterarStatus
+} from '../../store/tarefaReducer'
+
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(3)
@@ -20,7 +29,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const URL = 'https://minhastarefas-api.herokuapp.com/tarefas'
-const TarefasList = () => {
+const TarefasList = (props) => {
   const classes = useStyles();
 
   const [tarefas, setTarefas] = useState([]);
@@ -29,63 +38,63 @@ const TarefasList = () => {
 
   const HEADERS = { 'x-tenant-id': localStorage.getItem('email_usuario_logado')};
 
-  const salvar = (tarefa) => {
-    axios.post(
-      URL,
-      tarefa,
-      {
-        headers: HEADERS
-      }).then(response => {
-        const novaTarefa = response.data
-        setTarefas([...tarefas, novaTarefa])
-        abrirDialog('Item adicionado com sucesso')
-      }).catch(erro => {
-        abrirDialog('Ocorreum um erro')
-      })
-  }
+  // const salvar = (tarefa) => {
+  //   axios.post(
+  //     URL,
+  //     tarefa,
+  //     {
+  //       headers: HEADERS
+  //     }).then(response => {
+  //       const novaTarefa = response.data
+  //       setTarefas([...tarefas, novaTarefa])
+  //       abrirDialog('Item adicionado com sucesso')
+  //     }).catch(erro => {
+  //       abrirDialog('Ocorreum um erro')
+  //     })
+  // }
 
-  const listarTarefas = () => {
-    axios.get(
-      URL, {
-      headers: HEADERS
-    }).then(response => {
-      const listTarefas = response.data
-      setTarefas(listTarefas)
-    }).catch(erro => {
-      abrirDialog('Ocorreum um erro')
-    })
-  }
+  // const listarTarefas = () => {
+  //   axios.get(
+  //     URL, {
+  //     headers: HEADERS
+  //   }).then(response => {
+  //     const listTarefas = response.data
+  //     setTarefas(listTarefas)
+  //   }).catch(erro => {
+  //     abrirDialog('Ocorreum um erro')
+  //   })
+  // }
 
-  const alterarStatus = (id) => {
-    axios.patch(`${URL}/${id}`, null, {
-      headers: HEADERS
-    }).then(response => {
-      const lista = [...tarefas]
-      lista.forEach(tarefa => {
-        if (tarefa.id === id) {
-          tarefa.done = true
-        }
-      })
-      setTarefas(lista)
-      abrirDialog('Status atualizado com sucesso')
-    }).catch(erro => {
-      abrirDialog('Ocorreum um erro')
-    })
-  }
+  // const alterarStatus = (id) => {
+  //   axios.patch(`${URL}/${id}`, null, {
+  //     headers: HEADERS
+  //   }).then(response => {
+  //     const lista = [...tarefas]
+  //     lista.forEach(tarefa => {
+  //       if (tarefa.id === id) {
+  //         tarefa.done = true
+  //       }
+  //     })
+  //     setTarefas(lista)
+  //     abrirDialog('Status atualizado com sucesso')
+  //   }).catch(erro => {
+  //     abrirDialog('Ocorreum um erro')
+  //   })
+  // }
 
-  const deletar = (id) => {
-    axios.delete(`${URL}/${id}`, {
-      headers: HEADERS
-    })
-      .then(response => {
-        const lista = tarefas.filter(tarefa => tarefa.id !== id)
-        setTarefas(lista)
-        abrirDialog('Item deletado com sucesso')
-      })
-      .catch(erro => {
-        abrirDialog('Ocorreum um erro')
-      })
-  }
+  // const deletar = (id) => {
+  //   axios.delete(`${URL}/${id}`, {
+  //     headers: HEADERS
+  //   })
+  //     .then(response => {
+  //       const lista = tarefas.filter(tarefa => tarefa.id !== id)
+  //       setTarefas(lista)
+  //       abrirDialog('Item deletado com sucesso')
+  //     })
+  //     .catch(erro => {
+  //       abrirDialog('Ocorreum um erro')
+  //     })
+  // }
 
   const abrirDialog = (mensagem => {
     setMensagem(mensagem)
@@ -93,16 +102,17 @@ const TarefasList = () => {
   })
 
   useEffect(() => {
-    listarTarefas()
+    // listarTarefas()
+    props.listar()
   }, [])
 
   return (
     <div className={classes.root}>
-      <TarefasToolbar salvar={salvar} />
+      <TarefasToolbar salvar={props.salvar} />
       <div className={classes.content}>
-        <TarefasTable alterarStatus={alterarStatus}
-          deleteAction={deletar}
-          tarefas={tarefas} />
+        <TarefasTable alterarStatus={props.alterarStatus}
+          deleteAction={props.deletar}
+          tarefas={props.tarefas} />
       </div>
       <Dialog open={openDialog} onClose={e => setOpenDialog(false)}>
         <DialogTitle>Atenção</DialogTitle>
@@ -117,4 +127,13 @@ const TarefasList = () => {
   );
 };
 
-export default TarefasList;
+const mapStateToProps = state => ({
+  tarefas: state.tarefas.tarefas
+})
+
+const mapDispatchToProps = dispatch => 
+  bindActionCreators({listar, salvar, deletar, alterarStatus}, dispatch)
+
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(TarefasList);
